@@ -1,0 +1,99 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+     <link rel="icon" href="{% static 'ico.png' %}" type="image/png">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css"
+          rel="stylesheet" integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We"
+          crossorigin="anonymous">
+    <link rel="stylesheet" href="{% static 'main.css' %}">
+    <title>{{ title }}</title>
+</head>
+<body>
+    <header class="head">
+        <h1>Сократитель УЛЬ-ТРА</h1>
+    </header>
+    <article class="article">
+        Сокращает любой URL (максимальная длина - 1000 символов).
+        В поле "сокращенная ссылка" можно ввести как свой вариант (длиной от 2 до 20 символов), так и ничего не вводить
+        (ссылка сгенерируется автоматически)
+    </article>
+    <div class="contact-us">
+        <h2>Форма генерации</h2>
+        <span class="errorlist">{{ unreal_err }}</span>
+        <span class="errorlist">{{ form.non_field_errors }}</span>
+        <div>{{ form.original_url.field.placeholder }}</div>
+        <form method="POST" action="/" name="new_url" class="pagination-outer">
+            {% csrf_token %}
+            <span class="errorlist">{{ form.original_url.errors }}</span>
+            <label for="{{ form.original_url.id_for_label }}">
+                <strong>{{ form.original_url.label }}</strong>
+            </label>
+            <input placeholder="Ваша ссылка" required type="url"
+                   id="{{ form.original_url.id_for_label }}" name="original_url">
+            <span class="errorlist">{{ form.short_url_part.errors }}</span>
+            <label for="{{ form.short_url_part.id_for_label }}">
+                <strong>{{ form.short_url_part.label }}</strong>
+            </label>
+            <input placeholder="Сокращаем" type="text"
+                   id="{{ form.short_url_part.id_for_label }}" name="short_url_part">
+            <button type="submit"><strong>-!Сократить ссылку!-</strong></button>
+        </form>
+    </div>
+    <main>
+        {% if paginator.num_pages > 1 %}
+            <p class="pages_info">Всего страниц: {{ paginator.num_pages }}</p>
+            <nav class="pagination-outer" aria-label="page navigation">
+                <ul class="pagination">
+                    {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a href="?page={{ page_obj.previous_page_number }}" class="page-link" aria-label="previous">
+                                <span aria-hidden="true">«</span>
+                            </a>
+                        </li>
+                    {% endif %}
+
+                    {% for p in paginator.page_range %}
+                       {% if page_obj.number == p %}
+                            <li class="page-item active"><a class="page-link" href="?page={{ p }}">{{ p }}</a></li>
+                       {% elif p >= page_obj.number|add:-2 and p <= page_obj.number|add:2  %}
+                            <li class="page-item"><a class="page-link" href="?page={{ p }}">{{ p }}</a></li>
+                       {% endif %}
+                    {% endfor %}
+
+                    {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a href="?page={{ page_obj.next_page_number }}" class="page-link" aria-label="next">
+                                <span aria-hidden="true">»</span>
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        {% endif %}
+
+        <table class="table table-dark text-center w-75">
+            <thead>
+                <tr>
+                    <th scope="col">Ваши сокращенные ссылки</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for link in page_obj %}
+                    <tr>
+                        <td scope="row">
+                            <a href="/{{ link.short_url_part }}" class="link-info">
+                                {{ request.get_host }}/{{ link.short_url_part }}
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </main>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj"
+            crossorigin="anonymous"></script>
+</body>
+</html>
