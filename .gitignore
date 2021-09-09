@@ -1,6 +1,7 @@
 # My extra data
 emails/
 logs/
+.idea/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
