@@ -20,7 +20,7 @@ class Migration(migrations.Migration):
                 ('original_url', models.URLField(max_length=1000, verbose_name='Исходный адрес')),
                 ('short_url_part', models.CharField(blank=True, db_index=True, error_messages={'max_length': 'Превышена длина ссылки в 20 символов!', 'unique': 'Такой адрес уже есть в базе. Выберите другой'}, max_length=20, null=True, unique=True, validators=[django.core.validators.MinLengthValidator(2), shortme.utils.suitable_symbols_validator], verbose_name='Короткий адрес без домена')),
                 ('added', models.DateTimeField(auto_now_add=True, verbose_name='Дата добавления')),
-                ('client_session', models.CharField(max_length=200, verbose_name='Идентификатор пользователя')),
+                ('client_session', models.CharField(max_length=1200, verbose_name='Идентификатор пользователя')),
             ],
         ),
     ]
